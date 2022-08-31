@@ -1,32 +1,103 @@
 <script lang="ts" setup>
 import type { FormInstance } from "element-plus";
-import { token } from "~/store";
+import { isEmpty } from "lodash-es";
+import { githubConfig, user } from "~/store";
+import { githubApi, useGithubFetch } from "../fetch/index";
+import type { User } from "../store/types";
+
+const api = {
+  GetUser() {
+    return useGithubFetch(githubApi + "/user")
+      .get()
+      .json<User>();
+  },
+  GetRepos() {
+    return useGithubFetch(
+      `${user.value.repos_url}?type=all&sort=created&per_page=100`
+    )
+      .get()
+      .json();
+  },
+};
 
 const form = reactive({
-  accessToken: token.value,
+  token: githubConfig.value.token,
+  repo: githubConfig.value.repo as number,
 });
 
 const formRef = ref<FormInstance>();
 
-function submitForm(formEl: FormInstance | undefined) {
-  if (!formEl || !form.accessToken) return;
-  token.value = form.accessToken;
+const repos = ref<any[]>([]);
+
+async function init() {
+  if (!form.token) return;
+  if (isEmpty(user.value)) {
+    const { data } = await api.GetUser();
+    user.value = data.value;
+  }
+  const { data: res } = await api.GetRepos();
+  repos.value = res.value;
 }
+
+async function saveRepo() {
+  githubConfig.value.repo = form.repo;
+}
+
+async function saveToken() {
+  if (!form.token) return;
+  githubConfig.value.token = form.token;
+  init();
+}
+
+onMounted(() => {
+  init();
+});
 </script>
 
 <template>
   <main class="w-350px m-auto">
     <el-form :model="form" label-position="top" ref="formRef">
       <el-form-item label="Github access token">
-        <el-input v-model="form.accessToken" placeholder="请输入" />
+        <el-input v-model="form.token" placeholder="请输入" />
       </el-form-item>
 
-      <el-form-item>
-        <el-button type="primary" @click="submitForm(formRef)" class="w-100%"
-          >保存配置</el-button
+      <el-form-item label="Github repo" v-show="repos.length">
+        <el-select
+          v-model.number="form.repo"
+          placeholder="Select"
+          class="w-100%"
         >
+          <el-option
+            v-for="item in repos"
+            :key="item.id"
+            :label="item.name"
+            :value="item.id"
+          >
+            <span style="float: left">{{ item.name }}</span>
+            <span
+              style="
+                float: right;
+                color: var(--el-text-color-secondary);
+                font-size: 13px;
+              "
+              >{{ item.visibility }}</span
+            >
+          </el-option>
+        </el-select>
       </el-form-item>
     </el-form>
+
+    <el-button
+      type="primary"
+      @click="saveToken"
+      class="w100% h40px!"
+      v-if="!repos.length"
+    >
+      确 定
+    </el-button>
+    <el-button type="primary" @click="saveRepo" class="w100% h-40px!" v-else>
+      保存配置
+    </el-button>
 
     <span class="text-12px text-gray">
       注意： Pichub不会对你的 access token
