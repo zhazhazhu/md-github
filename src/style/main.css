@@ -1,0 +1,46 @@
+:-webkit-autofill {
+  transition: background-color 5000s ease-in-out 0s !important;
+}
+
+html {
+  overflow: hidden;
+  -webkit-text-size-adjust: 100%;
+}
+
+html,
+body,
+#app {
+  width: 100%;
+  margin: 0;
+  overflow: visible;
+  overflow-x: hidden;
+}
+[lang="zh"] body {
+  font-family: "仓耳渔阳体 W01", "Franklin Gothic Medium", "Arial Narrow", serif,
+    Arial, sans-serif;
+}
+
+a:focus,
+a:active,
+button,
+div,
+svg,
+span {
+  outline: none !important;
+}
+
+::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
+/* CDN 服务仅供平台体验和调试使用，平台不承诺服务的稳定性，企业客户需下载字体包自行发布使用并做好备份。 */
+@font-face {
+  font-family: "仓耳渔阳体 W01";
+  font-weight: 400;
+  src: url("//at.alicdn.com/wf/webfont/2kaSkBuGZ94D/Rh9EXy9qwyx0lu3y-1dRQ.woff2")
+      format("woff2"),
+    url("//at.alicdn.com/wf/webfont/2kaSkBuGZ94D/822_h4vNuChgE0oKx_x4s.woff")
+      format("woff");
+  font-display: swap;
+}

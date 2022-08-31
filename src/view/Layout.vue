@@ -3,7 +3,7 @@ const router = useRouter();
 </script>
 
 <template>
-  <el-container class="h-100vh">
+  <el-container class="h-100vh layout">
     <el-aside width="260px" class="b-r-1px b-color-#dcdfe6 relative">
       <div flex-center>
         <div i-mdi-language-markdown text-70px color-gray></div>
