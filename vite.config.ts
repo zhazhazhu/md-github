@@ -5,6 +5,7 @@ import Unocss from "unocss/vite";
 import AutoImport from "unplugin-auto-import/vite";
 import IconsResolver from "unplugin-icons/resolver";
 import Icons from "unplugin-icons/vite";
+import { ElementPlusResolver } from "unplugin-vue-components/resolvers";
 import Components from "unplugin-vue-components/vite";
 import { defineConfig } from "vite";
 
@@ -15,11 +16,12 @@ export default defineConfig({
     Jsx(),
     Unocss(),
     AutoImport({
+      resolvers: [ElementPlusResolver()],
       imports: ["vue", "vue-router", "@vueuse/core"],
       dts: "./types/auto-imports.d.ts",
     }),
     Components({
-      resolvers: [IconsResolver()],
+      resolvers: [IconsResolver(), ElementPlusResolver()],
       include: [/\.vue$/, /\.vue\?vue/],
       dts: "./types/components.d.ts",
     }),

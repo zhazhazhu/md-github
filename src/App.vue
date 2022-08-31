@@ -1,5 +1,11 @@
-<script lang="ts" setup></script>
+<script lang="ts" setup>
+import ElConfigProviderPreset from "~/element-plus";
+</script>
 
-<template></template>
+<template>
+  <ElConfigProviderPreset>
+    <router-view></router-view>
+  </ElConfigProviderPreset>
+</template>
 
 <style lang="less" scoped></style>
