@@ -3,6 +3,14 @@ import { githubConfig } from "~/store";
 
 export const githubApi = "https://api.github.com";
 
+export enum GithubStatus {
+  Success = 200,
+  Not_found = 404,
+  Conflict = 409,
+  Validation_failed = 422,
+  Service_unavailable = 503,
+}
+
 const options: UseFetchOptions = {
   timeout: 30 * 1000,
   beforeFetch({ url, options, cancel }) {

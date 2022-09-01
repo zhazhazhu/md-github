@@ -1,8 +1,9 @@
 <script lang="ts" setup>
 import { githubApi, useGithubFetch } from "~/fetch";
 import { githubConfig, user } from "~/store";
-import { fileDownloadUrlKey } from "../event-bus/index";
 import { useLoadingService } from "../hooks/element";
+import { useFileGlobalState } from "../store/index";
+import type { GithubFile } from "../store/types";
 
 const mdPath = ["index.md", "README.md"];
 
@@ -16,13 +17,15 @@ const api = {
       githubApi + `/repos/${unref(user).login}/${repo}/contents${path.value}`
     )
       .get()
-      .json();
+      .json<GithubFile[]>();
   },
 };
 
+const { getFile, setFile } = useFileGlobalState();
+
 const fileContainerRef = ref<HTMLElement>();
 
-const content = ref<any[]>([]);
+const content = ref<GithubFile[]>([]);
 
 const dirContent = computed(() =>
   content.value?.filter((item) => item.type === "dir")
@@ -40,10 +43,8 @@ async function onDirClick(p: string) {
   pathHistory.value.push(p);
 }
 
-const { emit } = useEventBus(fileDownloadUrlKey);
-
-function onFileClick(p: string) {
-  emit(p);
+function onFileClick(md: GithubFile) {
+  setFile(md);
 }
 
 function onReturnClick() {
@@ -55,7 +56,7 @@ watch(
   async (value) => {
     if (!value) return;
     const { data } = await api.GetContent(value);
-    content.value = data.value;
+    content.value = data.value || [];
   },
   {
     immediate: true,
@@ -72,7 +73,7 @@ watchDebounced(
   async () => {
     open();
     const { data } = await api.GetContent(repo);
-    content.value = data.value;
+    content.value = data.value || [];
     loading.value?.close();
   },
   {
@@ -83,48 +84,60 @@ watchDebounced(
 watch(mdContent, (val) => {
   if (val.length) {
     const current = val.find((item) => mdPath.includes(item.name)) || val[0];
-    emit(current.download_url);
+    setFile(current);
   }
 });
 </script>
 
 <template>
-  <main
-    class="file-list w-100% color-gray-6 text-12px my10px"
-    ref="fileContainerRef"
-  >
+  <main class="w-100% color-gray-6 text-12px my10px" ref="fileContainerRef">
     <el-link
       class="my-10px m-l-30px"
       v-if="path !== '/'"
       @click="onReturnClick"
     >
-      <div i-icon-park-outline-return></div>
+      <div i-typcn-arrow-back></div>
       <span class="m-l-4px text-12px">返回上一级</span>
     </el-link>
-    <div class="flex items-center flex-col">
+
+    <div class="file-list">
       <template v-for="dir in dirContent">
-        <div
-          cursor-pointer
-          class="h40px w-50% b-rd-8px hover:bg-gray-2 lh-40px px30px"
-          @click="onDirClick(dir.path)"
-        >
+        <div cursor-pointer class="file-item" @click="onDirClick(dir.path)">
           {{ dir.name }}
         </div>
       </template>
     </div>
 
-    <div class="flex items-center flex-col">
+    <div class="file-list">
       <template v-for="md in mdContent">
-        <div
-          cursor-pointer
-          class="h40px w-50% b-rd-8px hover:bg-gray-2 lh-40px px30px"
-          @click="onFileClick(md.download_url)"
-        >
+        <div cursor-pointer class="file-item" @click="onFileClick(md)">
           {{ md.name }}
+          <span
+            v-if="getFile?.sha === md.sha"
+            class="w8px h8px bg-green b-rd-100% m-l-10px"
+          ></span>
         </div>
       </template>
     </div>
   </main>
 </template>
 
-<style lang="less" scoped></style>
+<style lang="less" scoped>
+.file-list {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+.file-item {
+  height: 40px;
+  width: 100px;
+  border-radius: 8px;
+  line-height: 40px;
+  padding: 0 30px;
+  display: flex;
+  align-items: center;
+  &:hover {
+    background-color: rgb(229, 231, 235);
+  }
+}
+</style>
