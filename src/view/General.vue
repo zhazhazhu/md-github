@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { ElMessage, type FormInstance } from "element-plus";
 import { isEmpty } from "lodash-es";
+import { useLoadingService } from "~/hooks";
 import { githubConfig, user } from "~/store";
 import { githubApi, useGithubFetch } from "../fetch/index";
 import type { GithubConfig, User } from "../store/types";
@@ -41,15 +42,23 @@ async function init() {
   repos.value = res.value;
 }
 
+const { loading, open } = useLoadingService({
+  text: "保存中...",
+});
+
 async function saveToken() {
   if (!form.token) return;
+  open();
   githubConfig.value.token = form.token;
-  init();
+  await init();
+  loading.value?.close();
 }
 
 async function saveRepo() {
+  open();
   githubConfig.value.repo = form.repo;
   ElMessage.success("保存成功");
+  loading.value?.close();
   router.push("/");
 }
 

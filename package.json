@@ -7,13 +7,14 @@
   "license": "ISC",
   "scripts": {
     "dev": "vite --port 3333",
-    "build": "vite build",
+    "build": "cross-env NODE_ENV=production vite build",
     "preview": "vite preview",
     "lint": "prettier --write ."
   },
   "dependencies": {
     "@kangc/v-md-editor": "^2.3.15",
     "@vueuse/core": "^9.1.0",
+    "cross-env": "^7.0.3",
     "crypto-js": "^4.1.1",
     "dayjs": "^1.11.5",
     "element-plus": "^2.2.15",
