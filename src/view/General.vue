@@ -61,6 +61,10 @@ async function sinInOut() {
   repos.value = [];
 }
 
+function getToken() {
+  window.open("https://www.qzzhu.cn/moments/github-token");
+}
+
 onMounted(() => {
   init();
 });
@@ -70,7 +74,11 @@ onMounted(() => {
   <main class="w-350px m-auto mt6%">
     <p class="text-22px color-gray-700 font-500">开始</p>
     <el-form :model="form" label-position="top" ref="formRef">
-      <el-form-item label="Github access token">
+      <el-form-item>
+        <template #label>
+          <span>Github access token</span>
+          <el-link class="m-l-10px" @click="getToken">如何获取?</el-link>
+        </template>
         <el-input v-model="form.token" placeholder="请输入" />
       </el-form-item>
 

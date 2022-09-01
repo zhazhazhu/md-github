@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import dayjs from "dayjs";
-import { ElNotification } from "element-plus";
+import { ElMessage, ElNotification } from "element-plus";
 import { githubApi, GithubStatus, useGithubFetch } from "~/fetch";
 import { useLoadingService } from "~/hooks";
 import { githubConfig, useFileGlobalState, user } from "~/store";
@@ -48,6 +48,13 @@ async function onAddFile() {
   loading.value?.close();
   emit();
 }
+
+function showPopover() {
+  if (!unref(githubConfig).token) {
+    popoverVisible.value = false;
+    ElMessage.warning("请先登录");
+  }
+}
 </script>
 
 <template>
@@ -71,6 +78,7 @@ async function onAddFile() {
           :width="200"
           trigger="click"
           v-model:visible="popoverVisible"
+          @before-enter="showPopover"
         >
           <template #reference>
             <el-button size="large" class="w-160px m-b-10px text-12px!" round
