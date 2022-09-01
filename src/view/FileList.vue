@@ -113,8 +113,8 @@ on(() => {
 
     <div class="file-list">
       <template v-for="dir in dirContent">
-        <div cursor-pointer class="file-item" @click="onDirClick(dir.path)">
-          {{ dir.name }}
+        <div cursor-pointer class="file-item" @click="onDirClick(dir.name)">
+          <span class="name">{{ dir.name }}</span>
         </div>
       </template>
     </div>
@@ -122,7 +122,7 @@ on(() => {
     <div class="file-list">
       <template v-for="md in mdContent">
         <div cursor-pointer class="file-item" @click="onFileClick(md)">
-          {{ md.name }}
+          <span class="name">{{ md.name }}</span>
           <span
             v-if="getFile?.sha === md.sha"
             class="w8px h8px bg-green b-rd-100% m-l-10px"
@@ -150,5 +150,10 @@ on(() => {
   &:hover {
     background-color: rgb(229, 231, 235);
   }
+}
+.file-item .name {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 </style>
