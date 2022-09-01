@@ -1,7 +1,10 @@
 <script lang="ts" setup>
 import { githubApi, useGithubFetch } from "~/fetch";
 import { githubConfig, user } from "~/store";
+import { fileDownloadUrlKey } from "../event-bus/index";
 import { useLoadingService } from "../hooks/element";
+
+const mdPath = ["index.md", "README.md"];
 
 const pathHistory = ref(["/"]);
 
@@ -22,11 +25,11 @@ const fileContainerRef = ref<HTMLElement>();
 const content = ref<any[]>([]);
 
 const dirContent = computed(() =>
-  content.value.filter((item) => item.type === "dir")
+  content.value?.filter((item) => item.type === "dir")
 );
 
 const mdContent = computed(() =>
-  content.value.filter(
+  content.value?.filter(
     (item) => item.type === "file" && item.name.endsWith("md")
   )
 );
@@ -35,6 +38,12 @@ const repo = githubConfig.value.repo;
 
 async function onDirClick(p: string) {
   pathHistory.value.push(p);
+}
+
+const { emit } = useEventBus(fileDownloadUrlKey);
+
+function onFileClick(p: string) {
+  emit(p);
 }
 
 function onReturnClick() {
@@ -70,6 +79,13 @@ watchDebounced(
     debounce: 200,
   }
 );
+
+watch(mdContent, (val) => {
+  if (val.length) {
+    const current = val.find((item) => mdPath.includes(item.name)) || val[0];
+    emit(current.download_url);
+  }
+});
 </script>
 
 <template>
@@ -102,6 +118,7 @@ watchDebounced(
         <div
           cursor-pointer
           class="h40px w-50% b-rd-8px hover:bg-gray-2 lh-40px px30px"
+          @click="onFileClick(md.download_url)"
         >
           {{ md.name }}
         </div>

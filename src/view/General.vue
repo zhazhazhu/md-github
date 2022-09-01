@@ -20,6 +20,8 @@ const api = {
   },
 };
 
+const router = useRouter();
+
 const form = reactive({
   token: githubConfig.value.token,
   repo: githubConfig.value.repo,
@@ -48,6 +50,7 @@ async function saveToken() {
 async function saveRepo() {
   githubConfig.value.repo = form.repo;
   ElMessage.success("保存成功");
+  router.push("/");
 }
 
 async function sinInOut() {
