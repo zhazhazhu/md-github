@@ -66,3 +66,15 @@ export interface GithubFile {
     self: string;
   };
 }
+
+export interface RepoData {
+  message: string;
+  content: string;
+  sha?: string;
+  branch?: string;
+  committer?: {
+    name: string;
+    email: string;
+    date?: string;
+  };
+}

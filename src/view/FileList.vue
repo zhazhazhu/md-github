@@ -1,27 +1,30 @@
 <script lang="ts" setup>
+import { getFileListContentKey } from "~/event-bus";
 import { githubApi, useGithubFetch } from "~/fetch";
 import { githubConfig, user } from "~/store";
 import { useLoadingService } from "../hooks/element";
 import { useFileGlobalState } from "../store/index";
 import type { GithubFile } from "../store/types";
 
+const { getFile, getPathToString, pushPath, popPath, setFile } =
+  useFileGlobalState();
+
+const { on } = useEventBus(getFileListContentKey);
+
 const mdPath = ["index.md", "README.md"];
-
-const pathHistory = ref(["/"]);
-
-const path = computed(() => pathHistory.value.join().replace(",", ""));
 
 const api = {
   GetContent(repo: string) {
     return useGithubFetch(
-      githubApi + `/repos/${unref(user).login}/${repo}/contents${path.value}`
+      githubApi +
+        `/repos/${unref(user).login}/${repo}/contents${
+          getPathToString.value
+        }?t=${Date.now()}`
     )
       .get()
       .json<GithubFile[]>();
   },
 };
-
-const { getFile, setFile } = useFileGlobalState();
 
 const fileContainerRef = ref<HTMLElement>();
 
@@ -40,7 +43,7 @@ const mdContent = computed(() =>
 const repo = githubConfig.value.repo;
 
 async function onDirClick(p: string) {
-  pathHistory.value.push(p);
+  pushPath(p);
 }
 
 function onFileClick(md: GithubFile) {
@@ -48,7 +51,7 @@ function onFileClick(md: GithubFile) {
 }
 
 function onReturnClick() {
-  pathHistory.value.pop();
+  popPath();
 }
 
 watch(
@@ -68,13 +71,17 @@ const { loading, open } = useLoadingService({
   text: "加载中...",
 });
 
+async function getContent() {
+  open();
+  const { data } = await api.GetContent(repo);
+  content.value = data.value || [];
+  loading.value?.close();
+}
+
 watchDebounced(
-  path,
+  getPathToString,
   async () => {
-    open();
-    const { data } = await api.GetContent(repo);
-    content.value = data.value || [];
-    loading.value?.close();
+    getContent();
   },
   {
     debounce: 200,
@@ -87,13 +94,17 @@ watch(mdContent, (val) => {
     setFile(current);
   }
 });
+
+on(() => {
+  getContent();
+});
 </script>
 
 <template>
   <main class="w-100% color-gray-6 text-12px my10px" ref="fileContainerRef">
     <el-link
       class="my-10px m-l-30px"
-      v-if="path !== '/'"
+      v-if="getPathToString !== '/'"
       @click="onReturnClick"
     >
       <div i-typcn-arrow-back></div>

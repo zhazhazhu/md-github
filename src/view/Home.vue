@@ -5,20 +5,9 @@ import { githubApi, useGithubFetch } from "~/fetch";
 import { useLoadingService } from "~/hooks";
 import MdEditor from "~/markdown-editor";
 import { githubConfig, useFileGlobalState, user } from "~/store";
+import type { RepoData } from "~/store/types";
 import { encryptByBase64 } from "~/utils";
 import { GithubStatus } from "../fetch/index";
-
-interface RepoData {
-  message: string;
-  content: string;
-  sha: string;
-  branch?: string;
-  committer?: {
-    name: string;
-    email: string;
-    date?: string;
-  };
-}
 
 const { getFile } = useFileGlobalState();
 
@@ -29,8 +18,10 @@ const api = {
     return useGithubFetch(getFile.value?.url!).put(data);
   },
   GetFile() {
-    return useFetch(
-      `${githubApi}/repos/${user.value.login}/${githubConfig.value.repo}/contents/${getFile.value?.path}`
+    return useGithubFetch(
+      `${githubApi}/repos/${user.value.login}/${
+        githubConfig.value.repo
+      }/contents/${getFile.value?.path}?t=${Date.now()}`
     )
       .get()
       .json();

@@ -5,6 +5,7 @@ export const githubApi = "https://api.github.com";
 
 export enum GithubStatus {
   Success = 200,
+  Created = 201,
   Not_found = 404,
   Conflict = 409,
   Validation_failed = 422,
