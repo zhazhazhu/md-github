@@ -1,9 +1,9 @@
 <script lang="ts" setup>
-import type { FormInstance } from "element-plus";
+import { ElMessage, type FormInstance } from "element-plus";
 import { isEmpty } from "lodash-es";
 import { githubConfig, user } from "~/store";
 import { githubApi, useGithubFetch } from "../fetch/index";
-import type { User } from "../store/types";
+import type { GithubConfig, User } from "../store/types";
 
 const api = {
   GetUser() {
@@ -22,7 +22,7 @@ const api = {
 
 const form = reactive({
   token: githubConfig.value.token,
-  repo: githubConfig.value.repo as number,
+  repo: githubConfig.value.repo,
 });
 
 const formRef = ref<FormInstance>();
@@ -39,14 +39,23 @@ async function init() {
   repos.value = res.value;
 }
 
-async function saveRepo() {
-  githubConfig.value.repo = form.repo;
-}
-
 async function saveToken() {
   if (!form.token) return;
   githubConfig.value.token = form.token;
   init();
+}
+
+async function saveRepo() {
+  githubConfig.value.repo = form.repo;
+  ElMessage.success("保存成功");
+}
+
+async function sinInOut() {
+  githubConfig.value = {} as GithubConfig;
+  user.value = null;
+  form.token = "";
+  form.repo = null as any;
+  repos.value = [];
 }
 
 onMounted(() => {
@@ -55,7 +64,8 @@ onMounted(() => {
 </script>
 
 <template>
-  <main class="w-350px m-auto">
+  <main class="w-350px m-auto mt6%">
+    <p class="text-22px color-gray-700 font-500">开始</p>
     <el-form :model="form" label-position="top" ref="formRef">
       <el-form-item label="Github access token">
         <el-input v-model="form.token" placeholder="请输入" />
@@ -71,7 +81,7 @@ onMounted(() => {
             v-for="item in repos"
             :key="item.id"
             :label="item.name"
-            :value="item.id"
+            :value="item.name"
           >
             <span style="float: left">{{ item.name }}</span>
             <span
@@ -87,22 +97,33 @@ onMounted(() => {
       </el-form-item>
     </el-form>
 
-    <el-button
-      type="primary"
-      @click="saveToken"
-      class="w100% h40px!"
-      v-if="!repos.length"
-    >
-      确 定
-    </el-button>
-    <el-button type="primary" @click="saveRepo" class="w100% h-40px!" v-else>
-      保存配置
-    </el-button>
+    <div>
+      <el-button
+        type="primary"
+        @click="saveToken"
+        class="w100% h40px!"
+        v-if="!repos.length"
+      >
+        确 定
+      </el-button>
+      <el-button type="primary" @click="saveRepo" class="w100% h-40px!" v-else>
+        保存配置
+      </el-button>
 
-    <span class="text-12px text-gray">
+      <el-button
+        type="danger"
+        @click="sinInOut"
+        class="w100% h-40px! m0! mt16px!"
+        v-if="!isEmpty(user)"
+      >
+        退出登录
+      </el-button>
+    </div>
+
+    <div class="text-12px text-gray mt-20px">
       注意： Pichub不会对你的 access token
       进行储存和转移，它只会储存在你的本机的浏览器内，所以它是相对安全的。如果你试图去浏览器的缓存中清除掉它，你会发现，它需要重新登陆了，但我们不推荐这样操作。
-    </span>
+    </div>
   </main>
 </template>
 

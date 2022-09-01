@@ -47,5 +47,5 @@ export interface User {
 
 export interface GithubConfig {
   token: string;
-  repo: number | null;
+  repo: string;
 }
