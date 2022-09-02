@@ -13,16 +13,42 @@ const { getPath } = useFileGlobalState();
 
 const fileName = ref("");
 
+const dirName = ref("");
+
 const api = {
   AddFile(data: RepoData) {
-    return useGithubFetch(
-      `${githubApi}/repos/${user.value.login}/${githubConfig.value.repo}/contents${getPath.value}${fileName.value}.md`
-    ).put(data);
+    const url =
+      githubApi +
+      "/repos/" +
+      unref(user).login +
+      "/" +
+      unref(githubConfig).repo +
+      "/contents" +
+      (unref(getPath) === "/" ? unref(getPath) : unref(getPath) + "/") +
+      unref(fileName) +
+      ".md";
+    return useGithubFetch(url).put(data);
+  },
+  AddDir(data: RepoData) {
+    const url =
+      githubApi +
+      "/repos/" +
+      unref(user).login +
+      "/" +
+      unref(githubConfig).repo +
+      "/contents" +
+      (unref(getPath) === "/" ? unref(getPath) : unref(getPath) + "/") +
+      unref(dirName) +
+      "/README.md";
+    return useGithubFetch(url).put(data);
   },
 };
 const router = useRouter();
 
-const popoverVisible = ref(false);
+const popover = reactive({
+  file: false,
+  dir: false,
+});
 
 const { emit } = useEventBus(getFileListContentKey);
 
@@ -44,16 +70,40 @@ async function onAddFile() {
       type: "success",
     });
   }
-  popoverVisible.value = false;
+  popover.file = false;
+  loading.value?.close();
+  emit();
+}
+
+async function onAddDir() {
+  open();
+  const { statusCode } = await api.AddDir({
+    message:
+      "md-github from a new Dir commit " + dayjs().format("YYYY/MM/DD HH:mm"),
+    content: encryptByBase64("Hello Markdown Github"),
+  });
+  if (statusCode.value === GithubStatus.Created) {
+    ElNotification({
+      title: "Success",
+      message: "创建成功",
+      type: "success",
+    });
+  }
+  popover.dir = false;
   loading.value?.close();
   emit();
 }
 
 function showPopover() {
   if (!unref(githubConfig).token) {
-    popoverVisible.value = false;
+    popover.file = false;
     ElMessage.warning("请先登录");
   }
+}
+
+function afterPopover() {
+  fileName.value = "";
+  dirName.value = "";
 }
 
 function openGithub() {
@@ -81,8 +131,9 @@ function openGithub() {
           placement="right"
           :width="200"
           trigger="click"
-          v-model:visible="popoverVisible"
+          v-model:visible="popover.file"
           @before-enter="showPopover"
+          @after-leave="afterPopover"
         >
           <template #reference>
             <el-button size="large" class="w-160px m-b-10px text-12px!" round
@@ -91,10 +142,33 @@ function openGithub() {
           </template>
           <el-input v-model="fileName" placeholder="请输入文件名" />
           <div m-t-10px text-center>
-            <el-button type="info" @click="popoverVisible = false"
+            <el-button type="info" @click="popover.file = false"
               >取消</el-button
             >
             <el-button type="primary" @click="onAddFile">确定</el-button>
+          </div>
+        </el-popover>
+
+        <el-popover
+          placement="right"
+          :width="200"
+          trigger="click"
+          v-model:visible="popover.dir"
+          @before-enter="showPopover"
+          @after-leave="afterPopover"
+        >
+          <template #reference>
+            <el-button
+              size="large"
+              class="w-160px m-b-10px ml0! text-12px!"
+              round
+              >新建文件夹</el-button
+            >
+          </template>
+          <el-input v-model="dirName" placeholder="请输入文件夹名" />
+          <div m-t-10px text-center>
+            <el-button type="info" @click="popover.dir = false">取消</el-button>
+            <el-button type="primary" @click="onAddDir">确定</el-button>
           </div>
         </el-popover>
 
