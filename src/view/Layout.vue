@@ -9,14 +9,14 @@ import { getFileListContentKey } from "../event-bus/index";
 import { encryptByBase64 } from "../utils/index";
 import FileList from "./FileList.vue";
 
-const { getPathToString } = useFileGlobalState();
+const { getPath } = useFileGlobalState();
 
 const fileName = ref("");
 
 const api = {
   AddFile(data: RepoData) {
     return useGithubFetch(
-      `${githubApi}/repos/${user.value.login}/${githubConfig.value.repo}/contents${getPathToString.value}${fileName.value}.md`
+      `${githubApi}/repos/${user.value.login}/${githubConfig.value.repo}/contents${getPath.value}${fileName.value}.md`
     ).put(data);
   },
 };

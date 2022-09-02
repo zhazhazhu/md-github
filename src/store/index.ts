@@ -11,32 +11,30 @@ export const githubConfig = useStorage<GithubConfig>("github-config", {
 export const useFileGlobalState = createGlobalState(() => {
   // state
   const file = ref<GithubFile | null>(null);
-  const pathHistory = ref<string[]>([]);
+  const path = ref("/");
 
   //getters
   const getFile = computed(() => file.value);
-  const getPathHistory = computed(() => pathHistory.value);
-  const getPathToString = computed(() => {
-    const path = pathHistory.value.join().replace(/,/g, "");
-    return path;
-  });
+
+  const getPath = computed(() => path.value);
 
   //actions
   function setFile(newFile: GithubFile) {
     file.value = newFile;
   }
 
-  function pushPath(path: string) {
-    pathHistory.value.push("/" + path);
+  function pushPath(p: string) {
+    path.value = "/".concat(p);
   }
   function popPath() {
-    pathHistory.value.pop();
+    const arr = path.value.split("/");
+    arr.pop();
+    path.value = arr.join("/") || "/";
   }
   return {
     file,
     getFile,
-    getPathHistory,
-    getPathToString,
+    getPath,
     setFile,
     pushPath,
     popPath,

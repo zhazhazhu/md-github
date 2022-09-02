@@ -6,8 +6,7 @@ import { useLoadingService } from "../hooks/element";
 import { useFileGlobalState } from "../store/index";
 import type { GithubFile } from "../store/types";
 
-const { getFile, getPathToString, pushPath, popPath, setFile } =
-  useFileGlobalState();
+const { getFile, getPath, pushPath, popPath, setFile } = useFileGlobalState();
 
 const { on } = useEventBus(getFileListContentKey);
 
@@ -18,7 +17,7 @@ const api = {
     return useGithubFetch(
       githubApi +
         `/repos/${unref(user).login}/${repo}/contents${
-          getPathToString.value
+          getPath.value
         }?t=${Date.now()}`
     )
       .get()
@@ -79,7 +78,7 @@ async function getContent() {
 }
 
 watchDebounced(
-  getPathToString,
+  getPath,
   async () => {
     getContent();
   },
@@ -104,7 +103,7 @@ on(() => {
   <main class="w-100% color-gray-6 text-12px my10px" ref="fileContainerRef">
     <el-link
       class="my-10px m-l-30px"
-      v-if="getPathToString !== '/'"
+      v-if="getPath !== '/'"
       @click="onReturnClick"
     >
       <div i-typcn-arrow-back></div>
@@ -113,7 +112,7 @@ on(() => {
 
     <div class="file-list">
       <template v-for="dir in dirContent">
-        <div cursor-pointer class="file-item" @click="onDirClick(dir.name)">
+        <div cursor-pointer class="file-item" @click="onDirClick(dir.path)">
           <span class="name">{{ dir.name }}</span>
         </div>
       </template>
