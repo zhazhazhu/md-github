@@ -55,6 +55,10 @@ function showPopover() {
     ElMessage.warning("请先登录");
   }
 }
+
+function openGithub() {
+  window.open("https://github.com/zhazhazhu/md-github");
+}
 </script>
 
 <template>
@@ -96,11 +100,20 @@ function showPopover() {
 
         <el-button
           size="large"
-          class="w-160px m0! text-12px!"
+          class="w-160px m-b-10px ml0! text-12px!"
           round
           @click="router.push('/general')"
           >设 置</el-button
         >
+
+        <el-button
+          size="large"
+          class="w-160px m-b-10px ml0!"
+          round
+          @click="openGithub"
+        >
+          <div i-fa-github-alt m-auto text-28px></div>
+        </el-button>
       </footer>
     </el-aside>
 
