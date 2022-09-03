@@ -28,21 +28,24 @@ const api = {
   },
 };
 
+const { loading, open } = useLoadingService({
+  text: "保存中...",
+});
+
 watchDebounced(
   getFile,
   async (val) => {
     if (!val) return;
+    open();
+    loading.value?.setText("加载中");
     const { data } = await api.GetFile();
     content.value = decodeURIComponent(
       escape(window.atob(data.value?.content))
     );
+    loading.value?.close();
   },
   { debounce: 200, immediate: true }
 );
-
-const { loading, open } = useLoadingService({
-  text: "保存中...",
-});
 
 async function onSaveClick() {
   open();
