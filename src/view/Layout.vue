@@ -97,6 +97,7 @@ async function onAddDir() {
 function showPopover() {
   if (!unref(githubConfig).token) {
     popover.file = false;
+    popover.dir = false;
     ElMessage.warning("请先登录");
   }
 }
