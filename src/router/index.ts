@@ -14,12 +14,12 @@ const routes: RouteRecordRaw[] = [
     redirect: "/home",
     children: [
       {
-        path: "/home",
+        path: "home",
         name: "home",
         component: () => import("~/view/Home.vue"),
       },
       {
-        path: "/general",
+        path: "general",
         name: "general",
         component: () => import("~/view/General.vue"),
       },
@@ -34,11 +34,9 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   if (!unref(githubConfig).token && to.name !== "general") {
-    next({ name: "general" });
     ElMessage.warning("请先登录");
-  } else {
-    next();
-  }
+    next({ name: "general" });
+  } else next();
 });
 
 export { router };
