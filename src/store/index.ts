@@ -64,6 +64,7 @@ export const useFileGlobalState = createGlobalState(() => {
     getFileList,
     getTabPanes,
     getCurrentTabPane,
+    tabPanes,
     pushPath,
     popPath,
     setFileList,

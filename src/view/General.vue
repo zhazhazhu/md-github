@@ -2,7 +2,7 @@
 import { ElMessage, type FormInstance } from "element-plus";
 import { isEmpty } from "lodash-es";
 import { useLoadingService } from "~/hooks";
-import { githubConfig, user } from "~/store";
+import { githubConfig, useFileGlobalState, user } from "~/store";
 import { githubApi, useGithubFetch } from "../fetch/index";
 import type { GithubConfig, User } from "../store/types";
 
@@ -20,6 +20,8 @@ const api = {
       .json();
   },
 };
+
+const { tabPanes } = useFileGlobalState();
 
 const router = useRouter();
 
@@ -57,6 +59,7 @@ async function saveToken() {
 async function saveRepo() {
   open();
   githubConfig.value.repo = form.repo;
+  tabPanes.value = [];
   ElMessage.success("保存成功");
   loading.value?.close();
   router.push("/");
