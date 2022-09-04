@@ -78,3 +78,7 @@ export interface RepoData {
     date?: string;
   };
 }
+
+export interface TabPane extends GithubFile {
+  content: any;
+}
