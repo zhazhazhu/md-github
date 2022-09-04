@@ -97,6 +97,7 @@ async function onAddDir() {
 function showPopover() {
   if (!unref(githubConfig).token) {
     popover.file = false;
+    popover.dir = false;
     ElMessage.warning("请先登录");
   }
 }
@@ -113,19 +114,18 @@ function openGithub() {
 
 <template>
   <el-container class="h-100vh layout">
-    <el-aside width="210px" class="b-r-1px b-color-#dcdfe6 relative">
+    <el-aside width="210px" class="bg-#f5fbff relative">
       <div flex-center cursor-pointer @click="router.push('/')">
         <div i-mdi-language-markdown text-70px color-gray></div>
         <div class="text-gray-600">Markdown</div>
       </div>
-      <div class="b-b-1px b-color-#dcdfe6 w-100%" />
 
       <main class="h[calc(100%-300px)]">
         <FileList></FileList>
       </main>
 
       <footer
-        class="w-100% h-300px b-t-1px b-color-#dcdfe6 absolute bottom-0 bg-gray-50 text-center py-20px"
+        class="w-100% h-300px absolute bottom-0 text-center py-20px flex flex-col items-center justify-end"
       >
         <el-popover
           placement="right"
@@ -191,7 +191,7 @@ function openGithub() {
       </footer>
     </el-aside>
 
-    <el-main>
+    <el-main class="p0!">
       <router-view></router-view>
     </el-main>
   </el-container>

@@ -1,16 +1,26 @@
 <script lang="ts" setup>
-import { getFileListContentKey } from "~/event-bus";
+import { getFileListContentKey, openNextFileKey } from "~/event-bus";
 import { githubApi, useGithubFetch } from "~/fetch";
 import { githubConfig, user } from "~/store";
 import { useLoadingService } from "../hooks/element";
 import { useFileGlobalState } from "../store/index";
 import type { GithubFile } from "../store/types";
 
-const { getFile, getPath, pushPath, popPath, setFile } = useFileGlobalState();
+const {
+  getPath,
+  getCurrentTabPane,
+  pushPath,
+  popPath,
+  setFileList,
+  addTabPane,
+  getFileList,
+} = useFileGlobalState();
 
 const { on } = useEventBus(getFileListContentKey);
 
-const mdPath = ["index.md", "README.md"];
+const { emit } = useEventBus(openNextFileKey);
+
+const imgSuffix = ["jpeg", "jpg", "png"];
 
 const api = {
   GetContent(repo: string) {
@@ -33,11 +43,22 @@ const dirContent = computed(() =>
   content.value?.filter((item) => item.type === "dir")
 );
 
-const mdContent = computed(() =>
-  content.value?.filter(
-    (item) => item.type === "file" && item.name.endsWith("md")
-  )
-);
+const mdContent = ref<GithubFile[]>([]);
+
+const imgContent = ref<GithubFile[]>([]);
+
+//设置图片和markdown 文件列表
+watch(content, (val) => {
+  imgContent.value = val?.filter(
+    (item) =>
+      item.type === "file" && imgSuffix.some((fix) => item.name.endsWith(fix))
+  );
+  mdContent.value =
+    val?.filter((item) => item.type === "file" && item.name.endsWith("md")) ||
+    [];
+
+  setFileList([...mdContent.value, ...imgContent.value]);
+});
 
 const repo = githubConfig.value.repo;
 
@@ -45,14 +66,15 @@ async function onDirClick(p: string) {
   pushPath(p);
 }
 
-function onFileClick(md: GithubFile) {
-  setFile(md);
+function onFileClick(file: GithubFile) {
+  emit(file);
 }
 
 function onReturnClick() {
   popPath();
 }
 
+//当前仓库变化重新获取当前仓库下的文件
 watch(
   () => unref(githubConfig).repo,
   async (value) => {
@@ -77,6 +99,7 @@ async function getContent() {
   loading.value?.close();
 }
 
+//当前路径变化重新获取当前路径下的文件内容
 watchDebounced(
   getPath,
   async () => {
@@ -87,13 +110,15 @@ watchDebounced(
   }
 );
 
-watch(mdContent, (val) => {
-  if (val.length) {
-    const current = val.find((item) => mdPath.includes(item.name)) || val[0];
-    setFile(current);
-  }
-});
+//当前选择的markdown变化后更新当前文件
+// watch(mdContent, (val) => {
+//   if (val.length) {
+//     const current = val.find((item) => mdPath.includes(item.name)) || val[0];
+//     setFile(current);
+//   }
+// });
 
+//获取文件列表
 on(() => {
   getContent();
 });
@@ -119,11 +144,12 @@ on(() => {
     </div>
 
     <div class="file-list">
-      <template v-for="md in mdContent">
-        <div cursor-pointer class="file-item" @click="onFileClick(md)">
-          <span class="name">{{ md.name }}</span>
+      <template v-for="file in getFileList">
+        <div cursor-pointer class="file-item" @click="onFileClick(file)">
+          <span class="name">{{ file.name }}</span>
+
           <span
-            v-if="getFile?.sha === md.sha"
+            v-if="getCurrentTabPane?.sha === file.sha"
             class="w8px h8px bg-green b-rd-100% m-l-10px"
           ></span>
         </div>
