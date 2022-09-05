@@ -4,7 +4,7 @@ import { ElMessage, ElNotification } from "element-plus";
 import { githubApi, GithubStatus, useGithubFetch } from "~/fetch";
 import { useLoadingService } from "~/hooks";
 import { githubConfig, useFileGlobalState, user } from "~/store";
-import type { RepoData } from "~/store/types";
+import type { SaveRepoData } from "~/store/types";
 import { getFileListContentKey } from "../event-bus/index";
 import { encryptByBase64 } from "../utils/index";
 import FileList from "./FileList.vue";
@@ -16,7 +16,7 @@ const fileName = ref("");
 const dirName = ref("");
 
 const api = {
-  AddFile(data: RepoData) {
+  AddFile(data: SaveRepoData) {
     const url =
       githubApi +
       "/repos/" +
@@ -29,7 +29,7 @@ const api = {
       ".md";
     return useGithubFetch(url).put(data);
   },
-  AddDir(data: RepoData) {
+  AddDir(data: SaveRepoData) {
     const url =
       githubApi +
       "/repos/" +

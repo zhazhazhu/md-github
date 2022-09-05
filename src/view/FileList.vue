@@ -60,7 +60,7 @@ watch(content, (val) => {
   setFileList([...mdContent.value, ...imgContent.value]);
 });
 
-const repo = githubConfig.value.repo;
+const repo = computed(() => githubConfig.value.repo);
 
 async function onDirClick(p: string) {
   pushPath(p);
@@ -94,7 +94,7 @@ const { loading, open } = useLoadingService({
 
 async function getContent() {
   open();
-  const { data } = await api.GetContent(repo);
+  const { data } = await api.GetContent(repo.value);
   content.value = data.value || [];
   loading.value?.close();
 }
