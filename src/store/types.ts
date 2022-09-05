@@ -69,7 +69,6 @@ export interface GithubFile {
 
 export interface RepoData {
   message: string;
-  content: string;
   sha?: string;
   branch?: string;
   committer?: {
@@ -78,6 +77,12 @@ export interface RepoData {
     date?: string;
   };
 }
+
+export interface SaveRepoData extends RepoData {
+  content: string;
+}
+
+export interface DeleteRepoData extends RepoData {}
 
 export interface TabPane extends GithubFile {
   content: any;

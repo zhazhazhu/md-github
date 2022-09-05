@@ -1,12 +1,12 @@
 <script lang="ts" setup>
 import dayjs from "dayjs";
-import { ElNotification } from "element-plus";
-import { openNextFileKey } from "~/event-bus";
+import { ElMessageBox, ElNotification } from "element-plus";
+import { getFileListContentKey, openNextFileKey } from "~/event-bus";
 import { githubApi, useGithubFetch } from "~/fetch";
 import { useLoadingService } from "~/hooks";
 import MdEditor from "~/markdown-editor";
 import { githubConfig, useFileGlobalState, user } from "~/store";
-import type { GithubFile, RepoData } from "~/store/types";
+import type { DeleteRepoData, GithubFile, SaveRepoData } from "~/store/types";
 import { encryptByBase64 } from "~/utils";
 import { GithubStatus } from "../fetch/index";
 
@@ -21,12 +21,14 @@ const {
 
 const { on } = useEventBus(openNextFileKey);
 
+const { emit } = useEventBus(getFileListContentKey);
+
 const tabName = ref("all");
 
 const nextFile = ref<GithubFile | null>(null);
 
 const api = {
-  SaveFile(data: RepoData) {
+  SaveFile(data: SaveRepoData) {
     return useGithubFetch(nextFile.value?.url!).put(data);
   },
   GetFile(path: string) {
@@ -37,6 +39,9 @@ const api = {
     )
       .get()
       .json();
+  },
+  DeleteFile(path: string, data: DeleteRepoData) {
+    return useGithubFetch(path).delete(data);
   },
 };
 
@@ -52,7 +57,7 @@ async function onSaveClick() {
   )!;
   const { statusCode } = await api.SaveFile({
     message:
-      "md-github from a new commit message " +
+      "feat: md-github from a new commit message " +
       dayjs().format("YYYY/MM/DD HH:mm"),
     content: encryptByBase64(content!),
     sha: getCurrentTabPane.value!.sha,
@@ -110,6 +115,32 @@ function onTabChange(val) {
   if (val === "all") return;
   setCurrentTabPane(tabName.value);
 }
+
+function deleteFile(file: GithubFile) {
+  ElMessageBox.confirm(`确认删除 ${file.name} 吗?`, {
+    confirmButtonText: "OK",
+    cancelButtonText: "Cancel",
+    type: "warning",
+  }).then(async () => {
+    open();
+    loading.value?.setText("删除文件中...");
+    const { statusCode } = await api.DeleteFile(file.url, {
+      message:
+        "delete: file and md-github from a new commit message " +
+        dayjs().format("YYYY/MM/DD HH:mm"),
+      sha: file.sha,
+    });
+    loading.value?.close();
+    if (statusCode.value === GithubStatus.Success) {
+      ElNotification({
+        title: "Success",
+        message: "删除成功",
+        type: "success",
+      });
+      emit();
+    }
+  });
+}
 </script>
 
 <template>
@@ -133,30 +164,40 @@ function onTabChange(val) {
           <div
             v-for="file in getFileList"
             :key="file.sha"
-            class="w180px h180px b-rd-10px bg-#F4F4F4 m-10px flex-center flex-col cursor-pointer hover:bg-gray-2"
+            class="file-item w150px h150px b-rd-10px bg-#f7f7f7 m-10px flex-center flex-col cursor-pointer hover:bg-#f5fbff relative"
             @click="onOpenFile(file)"
           >
+            <div
+              i-uiw-circle-close
+              class="close absolute top-6px right-6px text-#ff5151a6"
+              @click.stop="deleteFile(file)"
+            ></div>
+
             <!-- markdown 文件 -->
             <div
               v-if="file.name.endsWith('md')"
               i-file-icons-rmarkdown
-              text-5rem
+              text-4rem
               color-gray
               class="h[calc(100%-30px)]"
             ></div>
 
             <!-- 图片文件 -->
-            <a class="w100px max-h100px m-20px h[calc(100%-30px)]" v-else>
-              <img
+            <a class="w100px max-h100px m-20px h[calc(100%-70px)]" v-else>
+              <el-image
                 :src="file.download_url"
                 alt=""
                 fit="cover"
-                style="width: 100%; height: 100%"
+                style="
+                  width: 100%;
+                  max-height: 100%;
+                  line-height: calc(100% - 70px);
+                "
                 class="b-rd-8px"
               />
             </a>
 
-            <div class="h30px color-gray-8 text-12px">
+            <div class="h20px color-gray-8 text-12px">
               {{ file.name }}
             </div>
           </div>
@@ -194,7 +235,15 @@ function onTabChange(val) {
   padding: 15px;
   grid-gap: 15px;
   min-height: calc(100vh - 150px);
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+}
+.file-item {
+  .close {
+    display: none;
+  }
+  &:hover .close {
+    display: block;
+  }
 }
 :deep(.el-tabs__header) {
   border: none;
@@ -216,6 +265,7 @@ function onTabChange(val) {
 }
 :deep(.el-tabs__content) {
   height: calc(100vh - 80px);
+  overflow-y: auto;
   background-color: #fff;
   padding: 10px;
 }
