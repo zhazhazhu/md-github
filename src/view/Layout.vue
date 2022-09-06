@@ -5,6 +5,7 @@ import { githubApi, GithubStatus, useGithubFetch } from "~/fetch";
 import { useLoadingService } from "~/hooks";
 import { githubConfig, useFileGlobalState, user } from "~/store";
 import type { SaveRepoData } from "~/store/types";
+import Button from "../components/Button.vue";
 import { getFileListContentKey } from "../event-bus/index";
 import { encryptByBase64 } from "../utils/index";
 import FileList from "./FileList.vue";
@@ -114,10 +115,19 @@ function openGithub() {
 
 <template>
   <el-container class="h-100vh layout">
-    <el-aside width="210px" class="bg-#f5fbff relative">
-      <div flex-center cursor-pointer @click="router.push('/')">
+    <el-aside width="210px" class="bg-#EDEFF3 relative">
+      <div
+        flex-center
+        cursor-pointer
+        justify-start
+        @click="router.push('/')"
+        class="p6px"
+      >
         <div i-mdi-language-markdown text-70px color-gray></div>
-        <div class="text-gray-600">Markdown</div>
+        <!-- <svg class="icon mr12px text-20px" aria-hidden="true">
+          <use xlink:href="#icon-Light-2"></use>
+        </svg> -->
+        <div class="text-gray-600 ml10px">Markdown</div>
       </div>
 
       <main class="h[calc(100%-300px)]">
@@ -136,9 +146,12 @@ function openGithub() {
           @after-leave="afterPopover"
         >
           <template #reference>
-            <el-button size="large" class="w-160px m-b-10px text-12px!" round
-              >新建Markdown</el-button
-            >
+            <Button class="w200px m-b-10px">
+              <svg class="icon mr12px" aria-hidden="true">
+                <use xlink:href="#icon-a-xiugai-file"></use>
+              </svg>
+              新建 Markdown
+            </Button>
           </template>
           <el-input v-model="fileName" placeholder="请输入文件名" />
           <div m-t-10px text-center>
@@ -158,12 +171,12 @@ function openGithub() {
           @after-leave="afterPopover"
         >
           <template #reference>
-            <el-button
-              size="large"
-              class="w-160px m-b-10px ml0! text-12px!"
-              round
-              >新建文件夹</el-button
-            >
+            <Button class="w200px m-b-10px">
+              <svg class="icon mr12px" aria-hidden="true">
+                <use xlink:href="#icon-a-xiugai2"></use>
+              </svg>
+              新建 文件夹
+            </Button>
           </template>
           <el-input v-model="dirName" placeholder="请输入文件夹名" />
           <div m-t-10px text-center>
@@ -172,22 +185,19 @@ function openGithub() {
           </div>
         </el-popover>
 
-        <el-button
-          size="large"
-          class="w-160px m-b-10px ml0! text-12px!"
-          round
-          @click="router.push('/general')"
-          >设 置</el-button
-        >
+        <Button class="w200px m-b-10px" @click="router.push('/general')">
+          <svg class="icon mr12px" aria-hidden="true">
+            <use xlink:href="#icon-shezhi"></use>
+          </svg>
+          设 置
+        </Button>
 
-        <el-button
-          size="large"
-          class="w-160px m-b-10px ml0!"
-          round
-          @click="openGithub"
-        >
-          <div i-fa-github-alt m-auto text-28px></div>
-        </el-button>
+        <Button class="w200px m-b-10px" @click="openGithub">
+          <svg class="icon mr12px" aria-hidden="true">
+            <use xlink:href="#icon-github1"></use>
+          </svg>
+          GITHUB
+        </Button>
       </footer>
     </el-aside>
 

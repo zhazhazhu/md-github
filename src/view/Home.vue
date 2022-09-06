@@ -248,10 +248,12 @@ function deleteFile(file: GithubFile) {
 :deep(.el-tabs__header) {
   border: none;
   margin: 0 !important;
+  height: 34px;
   .el-tabs__item {
     font-size: 12px !important;
     border: none !important;
     min-width: 140px;
+    border-radius: 6px 6px 0 0;
   }
   .el-tabs__item.is-active {
     background-color: #fff;
