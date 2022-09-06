@@ -21,7 +21,7 @@ const api = {
   },
 };
 
-const { tabPanes } = useFileGlobalState();
+const { tabPanes, path } = useFileGlobalState();
 
 const router = useRouter();
 
@@ -60,6 +60,7 @@ async function saveRepo() {
   open();
   githubConfig.value.repo = form.repo;
   tabPanes.value = [];
+  path.value = "/";
   ElMessage.success("保存成功");
   loading.value?.close();
   router.push("/");

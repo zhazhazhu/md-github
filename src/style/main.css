@@ -14,7 +14,7 @@ body,
   margin: 0;
   overflow: visible;
   overflow-x: hidden;
-  background-color: #f5fbff;
+  background-color: #edeff3;
 }
 [lang="zh"] body {
   font-family: "仓耳渔阳体 W01", "Franklin Gothic Medium", "Arial Narrow", serif,
@@ -50,4 +50,12 @@ span {
   border-radius: 20px !important;
   box-shadow: 0 2px 12px 0 rgb(121 121 121 / 10%) !important;
   width: auto !important;
+}
+
+.icon {
+  width: 2.2em;
+  height: 2.2em;
+  vertical-align: -0.15em;
+  fill: currentColor;
+  overflow: hidden;
 }

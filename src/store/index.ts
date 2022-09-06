@@ -60,6 +60,7 @@ export const useFileGlobalState = createGlobalState(() => {
   }
 
   return {
+    path,
     getPath,
     getFileList,
     getTabPanes,

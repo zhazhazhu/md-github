@@ -166,12 +166,14 @@ on(() => {
 }
 .file-item {
   height: 40px;
-  width: 100px;
+  width: 200px;
   border-radius: 8px;
   line-height: 40px;
-  padding: 0 30px;
+  padding: 0 20px;
   display: flex;
   align-items: center;
+  justify-content: flex-start;
+  box-sizing: border-box;
   &:hover {
     background-color: rgb(229, 231, 235);
   }
