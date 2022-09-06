@@ -120,13 +120,21 @@ function openGithub() {
         <div class="text-gray-600">Markdown</div>
       </div>
 
-      <main class="h[calc(100%-300px)]">
+      <main class="h[calc(100%-400px)] overflow-auto">
         <FileList></FileList>
       </main>
 
       <footer
         class="w-100% h-300px absolute bottom-0 text-center py-20px flex flex-col items-center justify-end"
       >
+        <el-button
+          size="large"
+          class="w-160px m-b-10px ml0! text-12px!"
+          round
+          @click="router.push('/upload_image')"
+          >图片上传</el-button
+        >
+
         <el-popover
           placement="right"
           :width="200"
@@ -136,7 +144,10 @@ function openGithub() {
           @after-leave="afterPopover"
         >
           <template #reference>
-            <el-button size="large" class="w-160px m-b-10px text-12px!" round
+            <el-button
+              size="large"
+              class="w-160px m-b-10px ml0! text-12px!"
+              round
               >新建Markdown</el-button
             >
           </template>

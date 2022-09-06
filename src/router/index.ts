@@ -23,6 +23,11 @@ const routes: RouteRecordRaw[] = [
         name: "general",
         component: () => import("~/view/General.vue"),
       },
+      {
+        path: "upload_image",
+        name: "upload_image",
+        component: () => import("~/view/UploadList.vue"),
+      },
     ],
   },
 ];
