@@ -10,6 +10,7 @@ import { githubConfig, useFileGlobalState, user } from "~/store";
 import type { DeleteRepoData, GithubFile, SaveRepoData } from "~/store/types";
 import { encryptByBase64 } from "~/utils";
 import { GithubStatus } from "../fetch/index";
+import ImagePreview from "./ImagePreview.vue";
 
 const {
   getTabPanes,
@@ -145,7 +146,11 @@ function deleteFile(file: GithubFile) {
   });
 }
 
-function onPreviewImage(file: GithubFile) {}
+const imagePreviewRef = ref<InstanceType<typeof ImagePreview>>();
+
+function onPreviewImage(file: GithubFile) {
+  imagePreviewRef.value?.open(file.path);
+}
 
 function copyText(text: string) {
   copy(text);
@@ -158,7 +163,7 @@ function copyText(text: string) {
     type="primary"
     @click="onSaveClick"
     v-if="tabName !== 'all'"
-    class="absolute top-8px right-20px z-1000"
+    class="absolute top-4px right-20px z-1000"
   >
     保 存
   </el-button>
@@ -204,7 +209,7 @@ function copyText(text: string) {
                   line-height: calc(100% - 90px);
                 "
                 class="b-rd-8px cursor-zoom-in"
-                @click.stop="onPreviewImage(file)"
+                @click="onPreviewImage(file)"
               />
             </a>
 
@@ -252,11 +257,7 @@ function copyText(text: string) {
     </template>
   </el-tabs>
 
-  <!-- <MdEditor v-model="content" height="80vh" v-if="getFile"></MdEditor>
-  <div class="flex-center flex-col" v-else>
-    <div i-ic-outline-insert-drive-file text-5rem color-gray-4></div>
-    <span class="color-gray-4 text-12px">请选择一个markdown文件</span>
-  </div> -->
+  <ImagePreview ref="imagePreviewRef"></ImagePreview>
 </template>
 
 <style lang="less" scoped>
