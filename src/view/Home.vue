@@ -110,6 +110,8 @@ watchDebounced(
       });
       tabName.value = val.path;
       loading.value?.close();
+    } else {
+      imagePreviewRef.value?.open(val?.path);
     }
   },
   { debounce: 200 }

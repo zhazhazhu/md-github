@@ -13,8 +13,8 @@ const imagePreviewRef = ref<HTMLUListElement>();
 
 const viewer = ref<Viewer>();
 
-function open(path: string) {
-  const index = imageList.value.findIndex((file) => file.path === path);
+function open(path?: string) {
+  const index = imageList.value.findIndex((file) => file.path === path) || 0;
   if (!viewer.value)
     viewer.value = new Viewer(imagePreviewRef.value!, {
       fullscreen: true,
@@ -22,8 +22,9 @@ function open(path: string) {
       zIndexInline: 2,
       toolbar: false,
     });
-  viewer.value.view(index);
-  viewer.value.show();
+  else viewer.value.update();
+  viewer.value?.view(index);
+  viewer.value?.show();
 }
 
 defineExpose({ open });

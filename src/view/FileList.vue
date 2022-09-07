@@ -21,6 +21,10 @@ const { on } = useEventBus(getFileListContentKey);
 
 const { emit } = useEventBus(openNextFileKey);
 
+const route = useRoute();
+
+const router = useRouter();
+
 const imgSuffix = ["jpeg", "jpg", "png"];
 
 const api = {
@@ -67,10 +71,12 @@ watch(content, (val) => {
 const repo = computed(() => githubConfig.value.repo);
 
 async function onDirClick(p: string) {
+  if (route.name !== "home") router.push("/home");
   pushPath(p);
 }
 
 function onFileClick(file: GithubFile) {
+  if (route.name !== "home") router.push("/home");
   emit(file);
 }
 
@@ -142,7 +148,13 @@ on(() => {
     <div class="file-list">
       <template v-for="dir in dirContent">
         <div cursor-pointer class="file-item" @click="onDirClick(dir.path)">
-          <span class="name">{{ dir.name }}</span>
+          <span class="name flex-center">
+            <div
+              i-ic-baseline-insert-drive-file
+              class="color-#6f94f3 mr-6px w12px"
+            ></div>
+            <span>{{ dir.name }}</span>
+          </span>
         </div>
       </template>
     </div>
@@ -150,7 +162,15 @@ on(() => {
     <div class="file-list">
       <template v-for="file in getFileList">
         <div cursor-pointer class="file-item" @click="onFileClick(file)">
-          <span class="name">{{ file.name }}</span>
+          <span class="name flex-center">
+            <div
+              i-mdi-language-markdown
+              class="color-#6f94f3 mr-6px w12px"
+              v-if="file.name.endsWith('md')"
+            ></div>
+            <div i-bxs-image class="color-#6f94f3 mr-6px w12px" v-else></div>
+            <span>{{ file.name }}</span>
+          </span>
 
           <span
             v-if="getCurrentTabPane?.sha === file.sha"
@@ -183,8 +203,13 @@ on(() => {
   }
 }
 .file-item .name {
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
+  width: 100%;
+  justify-content: flex-start;
+  span {
+    width: calc(100% - 20px);
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
 }
 </style>

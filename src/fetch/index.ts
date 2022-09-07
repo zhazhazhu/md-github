@@ -1,4 +1,5 @@
 import { createFetch, type UseFetchOptions } from "@vueuse/core";
+import { ElMessage } from "element-plus";
 import { githubConfig } from "~/store";
 
 export const githubApi = "https://api.github.com";
@@ -29,6 +30,7 @@ const options: UseFetchOptions = {
     };
   },
   onFetchError(ctx) {
+    ElMessage.error(ctx.data);
     return ctx;
   },
 };

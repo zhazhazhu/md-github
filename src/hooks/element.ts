@@ -17,7 +17,7 @@ export function useLoadingService(options: LoadingOptions) {
   const loading = ref<ReturnType<typeof ElLoading["service"]>>();
   function open() {
     loading.value = ElLoading.service({
-      background: "#f5fbff",
+      background: "#3f475817",
       ...loadingOptions,
       ...options,
       target: target.value,
