@@ -25,7 +25,7 @@ const { on } = useEventBus(openNextFileKey);
 
 const { emit } = useEventBus(getFileListContentKey);
 
-const { copy } = useClipboard();
+const { copy, isSupported } = useClipboard();
 
 const tabName = ref("all");
 
@@ -155,6 +155,10 @@ function onPreviewImage(file: GithubFile) {
 }
 
 function copyText(text: string) {
+  if (!isSupported.value) {
+    ElMessage.warning("没有权限，请耐心等待作者升级");
+    return;
+  }
   copy(text);
   ElMessage.success("复制成功");
 }
