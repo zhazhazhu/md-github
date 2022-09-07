@@ -3,6 +3,7 @@ import { getFileListContentKey, openNextFileKey } from "~/event-bus";
 import { githubApi, useGithubFetch } from "~/fetch";
 import { githubConfig, user } from "~/store";
 import { useLoadingService } from "../hooks/element";
+import { downloadURLToCDN } from "../logic/index";
 import { useFileGlobalState } from "../store/index";
 import type { GithubFile } from "../store/types";
 
@@ -49,13 +50,16 @@ const imgContent = ref<GithubFile[]>([]);
 
 //设置图片和markdown 文件列表
 watch(content, (val) => {
-  imgContent.value = val?.filter(
-    (item) =>
-      item.type === "file" && imgSuffix.some((fix) => item.name.endsWith(fix))
-  );
+  imgContent.value = val
+    ?.filter(
+      (item) =>
+        item.type === "file" && imgSuffix.some((fix) => item.name.endsWith(fix))
+    )
+    .map((item) => ({ ...item, cdn_url: downloadURLToCDN(item.path) }));
   mdContent.value =
-    val?.filter((item) => item.type === "file" && item.name.endsWith("md")) ||
-    [];
+    val
+      ?.filter((item) => item.type === "file" && item.name.endsWith("md"))
+      .map((item) => ({ ...item, cdn_url: downloadURLToCDN(item.path) })) || [];
 
   setFileList([...mdContent.value, ...imgContent.value]);
 });
