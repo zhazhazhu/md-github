@@ -123,20 +123,27 @@ function openGithub() {
         @click="router.push('/')"
         class="p6px"
       >
-        <div i-mdi-language-markdown text-70px color-gray></div>
-        <!-- <svg class="icon mr12px text-20px" aria-hidden="true">
-          <use xlink:href="#icon-Light-2"></use>
-        </svg> -->
+        <!-- <div i-mdi-language-markdown text-70px color-gray></div> -->
+        <svg class="icon mr5px text-24px" aria-hidden="true">
+          <use xlink:href="#icon-yintian"></use>
+        </svg>
         <div class="text-gray-600 ml10px">Markdown</div>
       </div>
 
-      <main class="h[calc(100%-300px)]">
+      <main class="h[calc(100%-400px)] overflow-auto">
         <FileList></FileList>
       </main>
 
       <footer
         class="w-100% h-300px absolute bottom-0 text-center py-20px flex flex-col items-center justify-end"
       >
+        <Button class="w200px m-b-10px" @click="router.push('/upload_image')">
+          <svg class="icon mr12px" aria-hidden="true">
+            <use xlink:href="#icon-upload"></use>
+          </svg>
+          图片上传
+        </Button>
+
         <el-popover
           placement="right"
           :width="200"

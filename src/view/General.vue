@@ -145,7 +145,7 @@ onMounted(() => {
     </div>
 
     <div class="text-12px text-gray mt-20px">
-      注意： Pichub不会对你的 access token
+      注意： Markdown不会对你的 access token
       进行储存和转移，它只会储存在你的本机的浏览器内，所以它是相对安全的。如果你试图去浏览器的缓存中清除掉它，你会发现，它需要重新登陆了，但我们不推荐这样操作。
     </div>
   </main>

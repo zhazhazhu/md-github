@@ -28,6 +28,7 @@ div,
 svg,
 span {
   outline: none !important;
+  box-sizing: border-box;
 }
 
 ::-webkit-scrollbar {
