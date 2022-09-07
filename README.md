@@ -13,16 +13,14 @@
 - cdn加速预览
 - 上传图片
 - 删除文件
-
-### develop
 - cdn加速
 - 一键复制图片链接，markdown粘贴板可查看所有复制列表以供选择粘贴
 
 
-![Home-1](https://cdn.jsdelivr.net/gh/zhazhazhu/image-hosting@master/blog-photo/image_bk1sw1_.jpeg)
+![Home-1](https://cdn.jsdelivr.net/gh/zhazhazhu/image-hosting@master/blog-photo/image_55n54i_.jpeg)
 
-![Home-2](https://cdn.jsdelivr.net/gh/zhazhazhu/image-hosting@master/blog-photo/image_swj085_.jpeg)
+![Home-2]( https://cdn.jsdelivr.net/gh/zhazhazhu/image-hosting@master/blog-photo/image_qgf2g6_.jpeg)
 
-![Upload](https://cdn.jsdelivr.net/gh/zhazhazhu/image-hosting@master/blog-photo/image_uu7s7u_.jpeg)
+![Upload]( https://cdn.jsdelivr.net/gh/zhazhazhu/image-hosting@master/blog-photo/image_8aht8y_.jpeg)
 
-![Setting](https://cdn.jsdelivr.net/gh/zhazhazhu/image-hosting@master/blog-photo/image_z9jo6b_.jpeg)
+![Setting]( https://cdn.jsdelivr.net/gh/zhazhazhu/image-hosting@master/blog-photo/image_hdi7v2_.jpeg)
