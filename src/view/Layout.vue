@@ -123,10 +123,10 @@ function openGithub() {
         @click="router.push('/')"
         class="p6px"
       >
-        <div i-mdi-language-markdown text-70px color-gray></div>
-        <!-- <svg class="icon mr5px text-20px" aria-hidden="true">
-          <use xlink:href="#icon-shu"></use>
-        </svg> -->
+        <!-- <div i-mdi-language-markdown text-70px color-gray></div> -->
+        <svg class="icon mr5px text-24px" aria-hidden="true">
+          <use xlink:href="#icon-yintian"></use>
+        </svg>
         <div class="text-gray-600 ml10px">Markdown</div>
       </div>
 

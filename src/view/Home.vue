@@ -197,7 +197,7 @@ function deleteFile(file: GithubFile) {
               />
             </a>
 
-            <div class="h20px color-gray-8 text-12px">
+            <div class="h20px color-gray-8 text-12px text">
               {{ file.name }}
             </div>
           </div>
@@ -270,5 +270,12 @@ function deleteFile(file: GithubFile) {
   overflow-y: auto;
   background-color: #fff;
   padding: 10px;
+}
+.text {
+  width: 110px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: center;
 }
 </style>

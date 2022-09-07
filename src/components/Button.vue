@@ -1,7 +1,10 @@
 <script lang="ts" setup>
-const { type = "default" } = defineProps<{
+const { type = "default", round = false } = defineProps<{
   type?: "primary" | "default" | "gray";
+  round?: boolean;
 }>();
+
+const roundStyle = round ? "100%" : "8px";
 </script>
 
 <template>
@@ -19,7 +22,7 @@ const { type = "default" } = defineProps<{
   box-sizing: border-box;
   color: #313131;
   cursor: pointer;
-  border-radius: 8px;
+  border-radius: v-bind(roundStyle);
   font-weight: bold;
   font-size: 14px;
   &:hover {
