@@ -3,7 +3,7 @@ name: Markdown-github
 on:
   push:
     branches:
-      - master
+      - v1.0
 
 # 任务
 jobs:
