@@ -209,7 +209,11 @@ function openGithub() {
     </el-aside>
 
     <el-main class="p0!">
-      <router-view></router-view>
+      <router-view v-slot="{ Component }">
+        <KeepAlive>
+          <component :is="Component"></component>
+        </KeepAlive>
+      </router-view>
     </el-main>
   </el-container>
 </template>

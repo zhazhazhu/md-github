@@ -1,6 +1,7 @@
 <script lang="ts" setup>
+import { useClipboard } from "@vueuse/core";
 import dayjs from "dayjs";
-import { ElMessageBox, ElNotification } from "element-plus";
+import { ElMessage, ElMessageBox, ElNotification } from "element-plus";
 import { getFileListContentKey, openNextFileKey } from "~/event-bus";
 import { githubApi, useGithubFetch } from "~/fetch";
 import { useLoadingService } from "~/hooks";
@@ -9,6 +10,7 @@ import { githubConfig, useFileGlobalState, user } from "~/store";
 import type { DeleteRepoData, GithubFile, SaveRepoData } from "~/store/types";
 import { encryptByBase64 } from "~/utils";
 import { GithubStatus } from "../fetch/index";
+import ImagePreview from "./ImagePreview.vue";
 
 const {
   getTabPanes,
@@ -22,6 +24,8 @@ const {
 const { on } = useEventBus(openNextFileKey);
 
 const { emit } = useEventBus(getFileListContentKey);
+
+const { copy } = useClipboard();
 
 const tabName = ref("all");
 
@@ -106,6 +110,8 @@ watchDebounced(
       });
       tabName.value = val.path;
       loading.value?.close();
+    } else {
+      imagePreviewRef.value?.open(val?.path);
     }
   },
   { debounce: 200 }
@@ -141,6 +147,17 @@ function deleteFile(file: GithubFile) {
     }
   });
 }
+
+const imagePreviewRef = ref<InstanceType<typeof ImagePreview>>();
+
+function onPreviewImage(file: GithubFile) {
+  imagePreviewRef.value?.open(file.path);
+}
+
+function copyText(text: string) {
+  copy(text);
+  ElMessage.success("复制成功");
+}
 </script>
 
 <template>
@@ -148,7 +165,7 @@ function deleteFile(file: GithubFile) {
     type="primary"
     @click="onSaveClick"
     v-if="tabName !== 'all'"
-    class="absolute top-8px right-20px z-1000"
+    class="absolute top-4px right-20px z-1000"
   >
     保 存
   </el-button>
@@ -164,7 +181,7 @@ function deleteFile(file: GithubFile) {
           <div
             v-for="file in getFileList"
             :key="file.sha"
-            class="file-item w150px h150px b-rd-10px bg-#f7f7f7 m-10px flex-center flex-col cursor-pointer hover:bg-#f5fbff relative"
+            class="file-item w150px h150px b-rd-10px bg-#f7f7f7 m-10px flex-center flex-col justify-between cursor-pointer relative"
             @click="onOpenFile(file)"
           >
             <div
@@ -183,22 +200,43 @@ function deleteFile(file: GithubFile) {
             ></div>
 
             <!-- 图片文件 -->
-            <a class="w100px max-h100px m-20px h[calc(100%-70px)]" v-else>
+            <a class="w100px max-h100px m-20px h[calc(100%-90px)]" v-else>
               <el-image
-                :src="file.download_url"
-                alt=""
+                :src="file.cdn_url"
+                alt="loading error"
                 fit="cover"
                 style="
                   width: 100%;
                   max-height: 100%;
-                  line-height: calc(100% - 70px);
+                  line-height: calc(100% - 90px);
                 "
-                class="b-rd-8px"
+                class="b-rd-8px cursor-zoom-in"
+                @click="onPreviewImage(file)"
               />
             </a>
 
-            <div class="h20px color-gray-8 text-12px text">
-              {{ file.name }}
+            <div class="h40px color-gray-8 text-12px text">
+              <div class="info">
+                <el-button
+                  text
+                  bg
+                  size="small"
+                  @click.stop="copyText(`![${file.name}](${file.cdn_url})`)"
+                  >markdown</el-button
+                >
+                <el-button
+                  text
+                  bg
+                  size="small"
+                  @click.stop="copyText(file.cdn_url)"
+                >
+                  cdn
+                </el-button>
+              </div>
+
+              <span class="name">
+                {{ file.name }}
+              </span>
             </div>
           </div>
         </template>
@@ -221,11 +259,7 @@ function deleteFile(file: GithubFile) {
     </template>
   </el-tabs>
 
-  <!-- <MdEditor v-model="content" height="80vh" v-if="getFile"></MdEditor>
-  <div class="flex-center flex-col" v-else>
-    <div i-ic-outline-insert-drive-file text-5rem color-gray-4></div>
-    <span class="color-gray-4 text-12px">请选择一个markdown文件</span>
-  </div> -->
+  <ImagePreview ref="imagePreviewRef"></ImagePreview>
 </template>
 
 <style lang="less" scoped>
@@ -238,11 +272,40 @@ function deleteFile(file: GithubFile) {
   grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
 }
 .file-item {
+  box-sizing: border-box;
   .close {
     display: none;
   }
+  .text {
+    width: 100%;
+    padding: 0 10px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    text-align: center;
+    line-height: 36px;
+  }
+  .name {
+    display: black;
+  }
+  .info {
+    display: none;
+  }
+  &:hover {
+    border: 1px solid #ebebeb;
+  }
   &:hover .close {
     display: block;
+  }
+  &:hover .text {
+    background-color: #ffffff;
+    border-radius: 0 0 10px 10px;
+    .info {
+      display: block;
+    }
+    .name {
+      display: none;
+    }
   }
 }
 :deep(.el-tabs__header) {
@@ -270,12 +333,5 @@ function deleteFile(file: GithubFile) {
   overflow-y: auto;
   background-color: #fff;
   padding: 10px;
-}
-.text {
-  width: 110px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  text-align: center;
 }
 </style>

@@ -16,6 +16,7 @@ export default defineComponent({
     },
     zIndex: { type: Number, default: 3000 },
     locale: { type: Object as PropType<Language>, default: zhCn },
+    message: { type: Object as PropType<{ max: number }>, default: 1 },
   },
   setup(props, { slots }) {
     return () => (
@@ -23,6 +24,7 @@ export default defineComponent({
         size={props.size}
         zIndex={props.zIndex}
         locale={props.locale}
+        message={props.message}
       >
         {slots.default && slots.default()}
       </ElConfigProvider>
