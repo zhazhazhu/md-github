@@ -1,7 +1,11 @@
-<script lang="ts" setup></script>
+<script lang="ts" setup>
+const { type = "default" } = defineProps<{
+  type?: "primary" | "default" | "gray";
+}>();
+</script>
 
 <template>
-  <div class="md-button">
+  <div class="md-button" :class="type">
     <slot></slot>
   </div>
 </template>
@@ -20,6 +24,22 @@
   font-size: 14px;
   &:hover {
     background-color: #e2e4e7;
+  }
+}
+.md-button.primary {
+  background-color: #1b74e4;
+  color: white;
+  padding: 10px 20px;
+  &:hover {
+    background-color: #3286ed;
+  }
+}
+.md-button.gray {
+  background-color: #e3e5e9;
+  color: #636363;
+  padding: 10px 20px;
+  &:hover {
+    background-color: #d4d8dd;
   }
 }
 </style>
