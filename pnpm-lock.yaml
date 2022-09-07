@@ -25,6 +25,7 @@ specifiers:
   unplugin-auto-import: ^0.11.2
   unplugin-icons: ^0.14.8
   unplugin-vue-components: ^0.22.4
+  viewerjs: ^1.10.5
   vite: ^3.0.7
   vue: ^3.2.37
   vue-router: ^4.1.3
@@ -42,6 +43,7 @@ dependencies:
   highlight.js: 11.6.0
   lodash-es: 4.17.21
   pinia: 2.0.21_pj7ch6rmow6odq73xb5hfvge3q
+  viewerjs: 1.10.5
   vue: 3.2.38
   vue-router: 4.1.5_vue@3.2.38
 
@@ -3925,6 +3927,10 @@ packages:
       '@vant/popperjs': 1.2.1
       '@vant/use': 1.4.2
       vue: 3.2.38
+    dev: false
+
+  /viewerjs/1.10.5:
+    resolution: {integrity: sha512-QwKrmXlSfKg5x4y74F/jicpHIRqBMMfHXyboOxHDi5n4XAaejjpalphPq4/HW6venQAoMiD57HpVwBk0JvqpSA==}
     dev: false
 
   /vite/3.0.9_less@4.1.3:

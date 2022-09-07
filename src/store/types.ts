@@ -60,6 +60,7 @@ export interface GithubFile {
   size: number;
   type: string;
   url: string;
+  cdn_url: string;
   link: {
     git: string;
     html: string;

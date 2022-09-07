@@ -23,6 +23,7 @@
     "highlight.js": "^11.6.0",
     "lodash-es": "^4.17.21",
     "pinia": "^2.0.20",
+    "viewerjs": "^1.10.5",
     "vue": "^3.2.37",
     "vue-router": "^4.1.3"
   },
