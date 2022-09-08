@@ -57,7 +57,7 @@ const { loading, open } = useLoadingService({
 async function onSaveClick() {
   open();
   const { content } = getTabPanes.value.find(
-    (tab) => tab.name === tabName.value
+    (tab) => tab.path === tabName.value
   )!;
   const { statusCode } = await api.SaveFile({
     message:
