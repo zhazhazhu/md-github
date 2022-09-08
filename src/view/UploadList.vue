@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { useCeil } from "@vueuse/math";
 import dayjs from "dayjs";
-import { ElNotification } from "element-plus";
+import { ElMessage, ElNotification } from "element-plus";
 import { githubApi, GithubStatus, useGithubFetch } from "~/fetch";
 import { useLoadingService } from "~/hooks";
 import { githubConfig, useFileGlobalState, user } from "~/store";
@@ -124,10 +124,26 @@ async function onStartUpload() {
   uploadFiles.value.clear();
   loading.value?.close();
 }
+
+function pasteImage(event: ClipboardEvent) {
+  const files = event.clipboardData?.items;
+  if (!files?.length) return;
+  if (files[0].kind === "file" && files[0].type.includes("image")) {
+    const file = files[0].getAsFile();
+    if (!file) return;
+    filesData.value.add(file);
+    compressImage();
+  } else {
+    ElMessage.warning("文件格式不正确, 取消粘贴");
+  }
+}
 </script>
 
 <template>
-  <div class="w100% bg-white h100vh flex justify-center relative">
+  <div
+    class="w100% bg-white h100vh flex justify-center relative"
+    @paste="pasteImage"
+  >
     <header
       class="header absolute top-0 flex justify-between items-center px20px"
       v-show="uploadFiles.size"
