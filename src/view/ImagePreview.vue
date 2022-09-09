@@ -13,7 +13,10 @@ const imagePreviewRef = ref<HTMLUListElement>();
 
 const viewer = ref<Viewer>();
 
+const showImage = ref(false);
+
 function open(path?: string) {
+  showImage.value = true;
   const index = imageList.value.findIndex((file) => file.path === path) || 0;
   if (!viewer.value)
     viewer.value = new Viewer(imagePreviewRef.value!, {
@@ -21,6 +24,9 @@ function open(path?: string) {
       initialViewIndex: index,
       zIndexInline: 2,
       toolbar: false,
+      hide() {
+        showImage.value = false;
+      },
     });
   else viewer.value.update();
   viewer.value?.view(index);
@@ -31,7 +37,7 @@ defineExpose({ open });
 </script>
 
 <template>
-  <ul ref="imagePreviewRef">
+  <ul ref="imagePreviewRef" v-show="showImage">
     <li v-for="image in imageList">
       <img :src="image.cdn_url" :alt="image.name" />
     </li>

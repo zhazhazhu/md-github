@@ -25,7 +25,7 @@ const { on } = useEventBus(openNextFileKey);
 
 const { emit } = useEventBus(getFileListContentKey);
 
-const { copy } = useClipboard();
+const { copy, isSupported } = useClipboard();
 
 const tabName = ref("all");
 
@@ -57,7 +57,7 @@ const { loading, open } = useLoadingService({
 async function onSaveClick() {
   open();
   const { content } = getTabPanes.value.find(
-    (tab) => tab.name === tabName.value
+    (tab) => tab.path === tabName.value
   )!;
   const { statusCode } = await api.SaveFile({
     message:
@@ -155,6 +155,10 @@ function onPreviewImage(file: GithubFile) {
 }
 
 function copyText(text: string) {
+  if (!isSupported.value) {
+    ElMessage.warning("没有权限，请耐心等待作者升级");
+    return;
+  }
   copy(text);
   ElMessage.success("复制成功");
 }
